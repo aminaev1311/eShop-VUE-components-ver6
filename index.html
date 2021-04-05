@@ -11,9 +11,9 @@
         <nav-bar ref="navbar"></nav-bar>
         <h1>Products</h1>
         <input class="form-control me-2" type="text" placeholder="Search" aria-label="Search" @input="onSearch($event.target.value)">
-        <products ref="products"></products>
+        <products ref="products" :products="filtered"></products>
         <h1>Cart</h1>
-        <cart ref="cart"></cart>
+        <cart ref="cart" :cart-products="cartProducts"></cart>
     </div>
     
     <!-- i use bootstrap components, thus adding it here -->
