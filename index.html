@@ -10,10 +10,12 @@
     <div id="app">
         <nav-bar ref="navbar"></nav-bar>
         <h1>Products</h1>
-        <input class="form-control me-2" type="text" placeholder="Search" aria-label="Search" @input="onSearch($event.target.value)">
-        <products ref="products"></products>
+        <!-- <input class="form-control me-2" type="text" placeholder="Search" aria-label="Search" @input="onSearch($event.target.value)"> -->
+        <search :products="products" ref="search"></search>
+        <products :products="$root.$refs.search.filtered" ref="products"></products>
+        <!-- :products="this.$root.$refs.search.filtered"  -->
         <h1>Cart</h1>
-        <cart ref="cart"></cart>
+        <cart :cart="$root.cartFiltered" ref="cart"></cart>
     </div>
     
     <!-- i use bootstrap components, thus adding it here -->

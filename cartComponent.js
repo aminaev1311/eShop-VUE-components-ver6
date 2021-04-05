@@ -32,38 +32,36 @@ Vue.component('vertical-card', {
 });
 
 Vue.component('cart', {
+    props: ['cart'],
     template: `
         <div class="cart" style="gap: 20px;padding: 30px">
             <input class="form-control me-2" type="text" placeholder="Search" aria-label="Search" @input="onSearch($event.target.value)">
-            <vertical-card v-for="product of products" :key="product.id_product" :product="product" @remove="remove(product)">
+            <vertical-card v-for="product of cart" :key="product.id_product" :product="product" @remove="remove(product)">
             </vertical-card>
         </div>
     `,
     data() {
         return {
-            url: 'https://raw.githubusercontent.com/aminaev1311/online-store-api/master/responses/getBasket.json',
-            products: [],
         }
     },
     methods: {
-        getData(url) {
-            console.log("fetching data from" + this.url );
-            return fetch(url)
-            .then(response => {
-                console.log(response);
-                return response.json();
-            })
-            .then(data => {
-                this.products = data.contents;
-                console.log(this.products);
-            })
-            .catch(err => console.log(err));
+        add(product) {
+            console.log("adding to cart!" + product);
+            let foundProduct = this.cart.find( p => p.id_product === product.id_product );
+            console.log(foundProduct);
+            if (foundProduct) {
+                foundProduct.quantity++;
+            } else {
+                this.cart.push(Object.assign(product, {"quantity": 1}));
+            }
         },
+
         remove(product) {
+            console.log(this);
             product.quantity--;
-            let index = this.products.findIndex( p=> p.id_product === product.id_product);
+            let index = this.cart.findIndex( p=> p.id_product === product.id_product);
             if (product.quantity===0) {
-                this.products.splice(index,1);
+                this.cart.splice(index,1);
             }
         },
         // //доделать метод добавления
@@ -72,6 +70,5 @@ Vue.component('cart', {
         // }
     },
     mounted() {
-        this.getData(this.url);
     }
 });
