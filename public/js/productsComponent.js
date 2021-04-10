@@ -1,13 +1,13 @@
 Vue.component('product', {
     props: ['product'],
     template: `
-            <div class="card" style="width: 18rem;">
-                <img :src="src" class="card-img-top" alt="image">
-                <div class="card-body">
-                    <h5 class="card-title">{{product.product_name}}</h5>
-                    <p class="card-text">{{product.price}} RUB</p>
-                    <a class="btn btn-primary" @click="$emit('add', product)">Buy</a>
-                </div>
+        <div class="card" style="width: 18rem;">
+            <img :src="src" class="card-img-top" alt="image">
+            <div class="card-body">
+                <h5 class="card-title">{{product.product_name}}</h5>
+                <p class="card-text">{{product.price}} RUB</p>
+                <a class="btn btn-primary" @click="$emit('add', product)">Buy</a>
+            </div>
         </div>
     `,
     computed: {

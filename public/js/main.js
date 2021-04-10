@@ -5,8 +5,10 @@ const app = new Vue({
         filtered: [],
         cart: [],
         cartFiltered: [],
-        productsUrl: 'https://raw.githubusercontent.com/aminaev1311/online-store-api/master/responses/catalogData.json',
-        cartUrl: 'https://raw.githubusercontent.com/aminaev1311/online-store-api/master/responses/getBasket.json',
+        // productsUrl: 'https://raw.githubusercontent.com/aminaev1311/online-store-api/master/responses/catalogData.json',
+        productsUrl: './db/catalog.json',
+        // cartUrl: 'https://raw.githubusercontent.com/aminaev1311/online-store-api/master/responses/getBasket.json',
+        cartUrl: './db/cart.json',
         showCart: false,
         isConnectionError: false,
     }, 
@@ -42,9 +44,9 @@ const app = new Vue({
                 return response.json();
             })
             .then(data => {
-                this.cart = [...data.contents];
+                this.cart = [...data];
                 console.log(this.cart);
-                this.cartFiltered = [...data.contents];
+                this.cartFiltered = [...data];
             })
             .catch(err => {
                 console.log(err);

@@ -13,7 +13,6 @@ Vue.component('nav-bar',{
                 </ul>
                 <button class="btn btn-outline-success" type="button" @click="$root.showCart = !$root.showCart" style="position:relative">Cart</button>
                 <slot></slot>
-            </div>
         </div>
     </nav>
     `,
