@@ -63,26 +63,27 @@ Vue.component('cart', {
         }
     },
     methods: {
+        log(product, action) {
+            console.log(product, action, new Date());
+            let logObj = {product: product, action: action, time: new Date()};
+            this.$root.http('/stats', "POST", logObj)
+            return logObj;
+        },
         add(product) {
             let productWithQuantity = Object.assign({quantity: 1}, product);
             let find = this.$root.cart.find(item => item.id_product === product.id_product);
+            this.log(product.product_name, action = 'add');
             if (find) {
-                console.log(111);
-                console.log(find.product_name);
-                find.quantity += 1;
-                console.log('quantity: ' + find.quantity)
+                find.quantity++;
                 this.$root.cartFiltered = this.$root.cart;
                 //send put request to update the quantity of the product
                 this.$root.http( `/cart/${find.id_product}`, "PUT", {quantity: find.quantity});
-                console.log("updating quantity: " + find.product_name + find.quantity);
-                console.log('updated cart: ' + this.$root.cart.toString());
             } else {
                 //send the newly added product to the server
                 this.$root.http(this.$root.cartUrl, "POST", productWithQuantity).then(data => {
                     if (data.result === 1) {
                         console.log("adding to cart: " + product.product_name);
                         this.$root.cart.push(productWithQuantity);
-                        console.log('updated cart: ' + this.$root.cart.toString());
                         this.$root.cartFiltered = this.$root.cart;
                     }
                 });
@@ -90,6 +91,7 @@ Vue.component('cart', {
         },
 
         remove(product) {
+            this.log(product.product_name, action = 'remove');
             this.$root.http(this.$root.cartUrl+`/${product.id_product}`, "DELETE")
                 .then( data => {
                     if (data.result ===1) {

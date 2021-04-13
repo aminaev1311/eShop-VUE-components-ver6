@@ -91,3 +91,19 @@ app.delete('/cart/:id', (req,res) => {
         }
     });
 });
+
+app.post('/stats', (req,res) => {
+    fs.readFile( path.join(__dirname, 'db/stats.json') , 'utf-8', (err,data) => {
+        if (err) res.sendStatus(404, JSON.stringify({result: 0, text: err}));
+        else {
+            const stats = JSON.parse(data); //create an array of JSON cart objects
+            stats.push( req.body );//add a new item)
+            fs.writeFile( path.join(__dirname, 'db/stats.json'), JSON.stringify(stats), err => {
+                if (err) res.send( JSON.stringify({result: 0, text: err}) )
+                else {
+                    res.send( JSON.stringify( {result: 1}));
+                }
+            })
+        }
+    });
+});
