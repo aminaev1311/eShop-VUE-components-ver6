@@ -6,9 +6,9 @@ const app = new Vue({
         cart: [],
         cartFiltered: [],
         // productsUrl: 'https://raw.githubusercontent.com/aminaev1311/online-store-api/master/responses/catalogData.json',
-        productsUrl: './db/catalog.json',
+        productsUrl: './catalogData',
         // cartUrl: 'https://raw.githubusercontent.com/aminaev1311/online-store-api/master/responses/getBasket.json',
-        cartUrl: './db/cart.json',
+        cartUrl: './cart',
         showCart: false,
         isConnectionError: false,
     }, 
@@ -19,45 +19,39 @@ const app = new Vue({
 
             this.$root.filtered = this.$root.products.filter(product => regExp.test(product.product_name));
         },
-        getProducts(url) {
+
+        http(url, method = 'GET', data = null) {
             console.log("fetching data from" + url );
-            return fetch(url)
-            .then(response => {
-                console.log(response);
-                return response.json();
+            return fetch(url, {
+                method: method,
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: data ? JSON.stringify(data) : null,
             })
-            .then(data => {
-                this.products = [...data];
-                this.filtered = [...data];
-                console.log(this.products);
-            })
-            .catch(err => {
-                console.log(err);
-                this.$root.isConnectionError = !this.$root.isConnectionError;
-            });
-        },
-        getCart(url) {
-            console.log("fetching data from" + url );
-            return fetch(url)
-            .then(response => {
-                console.log(response);
-                return response.json();
-            })
-            .then(data => {
-                this.cart = [...data];
-                console.log(this.cart);
-                this.cartFiltered = [...data];
-            })
-            .catch(err => {
-                console.log(err);
-                this.$root.isConnectionError = !this.$root.isConnectionError;
-            });
+                .then(response => {
+                    console.log(response);
+                    return response.json();
+                })
+                .catch(err => {
+                    console.log(err);
+                    this.$root.isConnectionError = !this.$root.isConnectionError;
+                    return false;
+                });
         },
     },
     mounted() {
         console.log(this);
-        //получить товары каталога и корзины с сервера
-        this.getProducts(this.productsUrl);
-        this.getCart(this.cartUrl);
+
+        //get products from the server
+        this.http(this.productsUrl).then( res => {
+            this.products = this.filtered = [...res];
+        } );
+
+        //get cart from the server
+        this.http(this.cartUrl).then( res => {
+            this.cart = this.cartFiltered = [...res];
+            console.log(this.cart);
+        })
     }
 });

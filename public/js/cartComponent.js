@@ -47,7 +47,7 @@ Vue.component('cart', {
             <vertical-card v-for="product of $root.cart" :key="product.id_product" :product="product" @remove="remove(product)">
             </vertical-card>
             <div v-show="isEmpty">The cart is empty</div>
-            <div v-show="!isEmpty">total: {{total}} RUB. {{$root.cart.length}} items in the cart</div>
+            <div v-show="!isEmpty">total: {{total}} RUB. {{$root.cart.length}} position(s) in the cart</div>
         </div>
     `,
     computed: {
@@ -63,65 +63,50 @@ Vue.component('cart', {
         }
     },
     methods: {
-        // syncAdd(product) {
-        //     console.log("adding to cart: " + product);
-        //     let foundProduct = this.$root.cart.find( p => p.id_product === product.id_product );
-        //     console.log(foundProduct);
-        //     if (foundProduct) {
-        //         foundProduct.quantity++;
-        //     } else {
-        //         this.$root.cart.push(Object.assign(product, {"quantity": 1}));
-        //     }
-        //     this.$root.cartFiltered = this.$root.cart;
-        // },
-
         add(product) {
-            fetch('https://raw.githubusercontent.com/aminaev1311/online-store-api/master/responses/addToBasket.json')
-            .then(response => {
-                return response.json();
-            })
-            .then(data => {
-                if (data.result ===1) {
-                    console.log("adding to cart: " + product);
-                    let foundProduct = this.$root.cart.find( p => p.id_product === product.id_product );
-                    console.log(foundProduct);
-                    if (foundProduct) {
-                        foundProduct.quantity++;
-                    } else {
-                        this.$root.cart.push(Object.assign(product, {"quantity": 1}));
+            let productWithQuantity = Object.assign(product, {quantity: 1});
+            let find = this.$root.cart.find(item => item.id_product === product.id_product);
+            if (find) {
+                console.log(111);
+                console.log(find.product_name);
+                find.quantity += 1;
+                console.log('quantity: ' + find.quantity)
+                this.$root.cartFiltered = this.$root.cart;
+                //send put request to update the quantity of the product
+                this.$root.http( `/cart/${find.id_product}`, "PUT", {quantity: find.quantity});
+                console.log("updating quantity: " + find.product_name + find.quantity);
+                console.log('updated cart: ' + this.$root.cart.toString());
+            } else {
+                //send the newly added product to the server
+                this.$root.http(this.$root.cartUrl, "POST", productWithQuantity).then(data => {
+                    if (data.result === 1) {
+                        console.log("adding to cart: " + product.product_name);
+                        this.$root.cart.push(productWithQuantity);
+                        console.log('updated cart: ' + this.$root.cart.toString());
+                        this.$root.cartFiltered = this.$root.cart;
                     }
-                    this.$root.cartFiltered = this.$root.cart;
-                }
-            })
-            .catch(err => console.log(err));
+                });
+            }
         },
 
         remove(product) {
-            fetch('https://raw.githubusercontent.com/aminaev1311/online-store-api/master/responses/deleteFromBasket.json')
-            .then(response => {
-                return response.json();
-            })
-            .then(data => {
-                if (data.result ===1) {
-                    console.log("removing from cart: " + product);
-                    product.quantity--;
-                    let index = this.$root.cart.findIndex( p=> p.id_product === product.id_product);
-                    if (index === -1) {
-                        console.log(product + "not found in cart");
-                    } else {
-                        if (product.quantity===0) {
-                            this.$root.cart.splice(index,1);
+            this.$root.http(this.$root.cartUrl+`/${product.id_product}`, "DELETE")
+                .then( data => {
+                    if (data.result ===1) {
+                        console.log("removing from cart: " + product);
+                        let index = this.$root.cart.findIndex( p=> p.id_product === product.id_product);
+                        if (index === -1) {
+                            console.log(product + "not found in cart");
+                        } else {
+                            product.quantity--;
+                            if (product.quantity===0) {
+                                this.$root.cart.splice(index,1);
+                            }
                         }
+                        this.$root.cartFiltered = this.$root.cart;
                     }
-                    this.$root.cartFiltered = this.$root.cart;
-                } else {
-                    $root.isConnectionError = !$root.isConnectionError;
                 }
-            }) 
-            .catch(err => {
-                console.log(err);
-                $root.isConnectionError = !$root.isConnectionError;
-            });
+            );
         },
     },
     mounted() {

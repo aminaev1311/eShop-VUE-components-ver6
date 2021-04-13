@@ -23,7 +23,7 @@ Vue.component('products', {
         <div>
             <search :products="$root.products" type="products" ref="search"></search>
             <div class="products" style="display:flex;justify-content:space-between;flex-wrap:wrap;gap: 20px;margin: 30px">
-                <product v-for="product of products" :key="product.id_product" :product="product" @add="$root.$refs.cart.add"></product>
+                <product v-for="product of products" :key="product.id_product" :product="product" @add="$root.$refs.cart.add(product)"></product>
                 <div v-show="$root.filtered.length===0">Nothing found</div>
             </div>
         </div>
@@ -36,6 +36,5 @@ Vue.component('products', {
         
     },
     mounted() {
-        // this.getData(this.url);
     }
 });
