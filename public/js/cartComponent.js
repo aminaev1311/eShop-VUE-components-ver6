@@ -64,7 +64,7 @@ Vue.component('cart', {
     },
     methods: {
         add(product) {
-            let productWithQuantity = Object.assign(product, {quantity: 1});
+            let productWithQuantity = Object.assign({quantity: 1}, product);
             let find = this.$root.cart.find(item => item.id_product === product.id_product);
             if (find) {
                 console.log(111);
