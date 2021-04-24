@@ -22,7 +22,9 @@
   "homepage": "https://github.com/aminaev1311/eShop-VUE-components-ver6#readme",
   "dependencies": {
     "express": "^4.17.1",
+    "moment": "^2.29.1",
     "node": "^15.12.0",
-    "nodemon": "^2.0.7"
+    "nodemon": "^2.0.7",
+    "vue": "^2.6.12"
   }
 }

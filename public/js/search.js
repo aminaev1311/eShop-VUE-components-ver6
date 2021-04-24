@@ -1,8 +1,9 @@
 Vue.component( 'search', {
     props: ['products', 'type'],
     template:`
-        <input class="form-control me-2" type="text" placeholder="Enter product name" aria-label="Search" @input="onSearch($event.target.value)">
-    `,
+        <div>
+            <input class="form-control me-2" type="text" placeholder="Search by product name" aria-label="Search" @input="onSearch($event.target.value)" />
+        </div>`,
 
     methods: {
         onSearch(value) {
