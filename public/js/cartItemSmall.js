@@ -18,7 +18,7 @@ verticalCard =  Vue.component('vertical-card', {
                         <small class="text-muted"> total: {{total}}
                         </small>
                     </p>
-                    <a class="btn btn-primary" @click="$emit('remove', product)">X</a>
+                    <a class="btn btn-primary" @click="$erase('remove', product)">X</a>
                 </div>
             </div>
         </div>

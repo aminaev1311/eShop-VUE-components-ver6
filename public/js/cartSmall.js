@@ -39,47 +39,55 @@ Vue.component('cart', {
             this.$root.http('/stats', "POST", logObj)
             return logObj;
         },
+        
         add(product) {
             let productWithQuantity = Object.assign({quantity: 1}, product);
             let find = this.$root.cart.find(item => item.id_product === product.id_product);
             this.log(product.product_name, action = 'add');
             if (find) {
                 find.quantity++;
-                this.$root.cartFiltered = this.$root.cart;
                 //send put request to update the quantity of the product
-                this.$root.http( `/cart/${find.id_product}`, "PUT", {quantity: find.quantity});
+                this.$root.http( `/cart/${find.id_product}`, "PUT", {quantity: 1});
             } else {
                 //send the newly added product to the server
-                this.$root.http(this.$root.cartUrl, "POST", productWithQuantity).then(data => {
-                    if (data.result === 1) {
-                        console.log("adding to cart: " + product.product_name);
-                        this.$root.cart.push(productWithQuantity);
-                        this.$root.cartFiltered = this.$root.cart;
-                    }
-                });
+                // console.log("adding to cart: " + product.product_name);
+                this.$root.http(this.$root.cartUrl, "POST", productWithQuantity).
+                this.$root.cart.push(productWithQuantity);
+                // this.$root.cartFiltered = this.$root.cart;
             }
+            this.$root.cartFiltered = this.$root.cart;
         },
 
         remove(product) {
             this.log(product.product_name, action = 'remove');
-            this.$root.http(this.$root.cartUrl+`/${product.id_product}`, "DELETE")
-                .then( data => {
-                    if (data.result ===1) {
-                        console.log("removing from cart: " + product);
-                        let index = this.$root.cart.findIndex( p=> p.id_product === product.id_product);
-                        if (index === -1) {
-                            console.log(product + "not found in cart");
-                        } else {
-                            product.quantity--;
-                            if (product.quantity===0) {
-                                this.$root.cart.splice(index,1);
-                            }
-                        }
-                        this.$root.cartFiltered = this.$root.cart;
-                    }
+            // this.$root.http(this.$root.cartUrl+`/${product.id_product}`, "DELETE");
+            this.$root.http( `/cart/${product.id_product}`, "PUT", {quantity: -1});
+            console.log("removing from cart: " + product);
+            let index = this.$root.cart.findIndex( p=> p.id_product === product.id_product);
+            if (index === -1) {
+                console.log(product + "not found in cart");
+            } else {
+                product.quantity--;
+                if (product.quantity===0) {
+                    this.$root.cart.splice(index,1);
+                    this.$root.http(this.$root.cartUrl+`/${product.id_product}`, "DELETE");
                 }
-            );
+            }
+            this.$root.cartFiltered = this.$root.cart;
         },
+
+        erase(product) {
+            this.log(product.product_name, action = 'delete');
+            this.$root.http(this.$root.cartUrl+`/${product.id_product}`, "DELETE");
+            console.log("deleting from cart: " + product);
+            let index = this.$root.cart.findIndex( p=> p.id_product === product.id_product);
+            if (index === -1) {
+                console.log(product + "not found in cart");
+            } else {
+                this.$root.cart.splice(index,1);
+            }
+            this.$root.cartFiltered = this.$root.cart;
+        }
     },
     mounted() {
     }

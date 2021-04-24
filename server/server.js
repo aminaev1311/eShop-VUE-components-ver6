@@ -50,8 +50,9 @@ app.put('/cart/:id', (req,res) => {
             const elem = cart.find( el => el.id_product === +req.params.id );
             // console.log("element:" + elem);
             // console.log("element quantity:" + elem.quantity);
-            // console.log("request body: " + req.body);
-            if (elem) elem.quantity++;
+            console.log("request body: " + req.body.quantity);
+            let quantity = req.body.quantity;
+            if (elem) elem.quantity += quantity;
             else console.log("no such element in the cart!");
             fs.writeFile( path.join(__dirname, 'db/cart.json'), JSON.stringify(cart), err => {
                 if (err) res.send( JSON.stringify({result: 0, text: err}) )
@@ -73,17 +74,16 @@ app.delete('/cart/:id', (req,res) => {
             // console.log("element:" + elem);
             // console.log("element quantity:" + elem.quantity);
             // console.log("request body: " + req.body);
-            if (elem) elem.quantity--;
-            else console.log("no such element in the cart!");
-            if (elem.quantity === 0 ) {
+            if (elem) {
                 cart.splice( cart.indexOf(elem) ,1);
+                fs.writeFile( path.join(__dirname, 'db/cart.json'), JSON.stringify(cart), err => {
+                    if (err) res.send( JSON.stringify({result: 0, text: err}) )
+                    else {
+                        res.send( JSON.stringify( {result: 1}));
+                    }
+                });
             }
-            fs.writeFile( path.join(__dirname, 'db/cart.json'), JSON.stringify(cart), err => {
-                if (err) res.send( JSON.stringify({result: 0, text: err}) )
-                else {
-                    res.send( JSON.stringify( {result: 1}));
-                }
-            })
+            else console.log("no such element in the cart!");
         }
     });
 });

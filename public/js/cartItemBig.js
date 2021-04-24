@@ -19,7 +19,7 @@ verticalCard =  Vue.component('cart-item', {
                             <small class="text-muted"> total: {{total}}
                             </small>
                         </p>
-                    <a class="btn btn-primary" @click="$emit('remove', product)">X</a>
+                    <a class="btn btn-primary" @click="$emit('erase', product)">X</a>
                     </div>
                     <div style="margin-left:30px;">
                         <p class="card-text">warranty: {{product.warranty}} </p>
